@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scientific Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: black;
+    }
+
+    .calculator {
+      background-color: aqua;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      width: 400px;
+    }
+
+    .display, .secondary-display {
+      width: 100%;
+      height: 50px;
+      font-size: 24px;
+      margin-bottom: 10px;
+      text-align: right;
+      padding-right: 10px;
+      border: none;
+      background-color: seashell;
+      border-radius: 5px;
+    }
+
+    .secondary-display {
+      font-size: 18px;
+      color: #666;
+      height: 30px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: cornflowerblue;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: gray;
+    }
+
+    .operator { background-color: #ffa600; color: blue; }
+    .equal { background-color: #4caf50; color: blue; grid-column: span 2; }
+    .clear { background-color: #2110a3; color: white; }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" id="secondaryDisplay" class="secondary-display" disabled>
+    <input type="text" id="display" class="display" disabled>
+    <div class="buttons">
+      <!-- Scientific Buttons -->
+      <button onclick="appendValue('Math.sin(')">sin</button>
+      <button onclick="appendValue('Math.cos(')">cos</button>
+      <button onclick="appendValue('Math.tan(')">tan</button>
+      <button onclick="appendValue('Math.log10(')">log</button>
+      <button onclick="appendValue('Math.log(')">ln</button>
+
+      <button onclick="appendValue('Math.exp(')">exp</button>
+      <button onclick="appendValue('Math.PI')">π</button>
+      <button onclick="appendValue('Math.E')">e</button>
+      <button onclick="factorial()">x!</button>
+      <button onclick="appendValue('**')">^</button>
+
+      <!-- Standard Buttons -->
+      <button onclick="appendValue('(')">(</button>
+      <button onclick="appendValue(')')">)</button>
+      <button onclick="appendValue('%')">%</button>
+      <button onclick="squareRoot()">√</button>
+      <button onclick="square()">x²</button>
+
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button class="operator" onclick="appendValue('/')">÷</button>
+      <button class="operator" onclick="appendValue('+')">+</button>
+
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button class="operator" onclick="appendValue('*')">×</button>
+      <button class="operator" onclick="appendValue('-')">−</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button onclick="deleteLast()">DEL</button>
+      <button class="clear" onclick="clearDisplay()">C</button>
+
+      <button onclick="appendValue('0')">0</button>
+      <button onclick="appendValue('.')">.</button>
+      <button onclick="toggleSign()">±</button>
+      <button class="equal" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById("display");
+    const secondaryDisplay = document.getElementById("secondaryDisplay");
+
+    function appendValue(value) {
+      display.value += value;
+    }
+
+    function clearDisplay() {
+      display.value = "";
+      secondaryDisplay.value = "";
+    }
+
+    function deleteLast() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+      try {
+        secondaryDisplay.value = display.value;
+        let result = eval(display.value.replace('%', '/100'));
+        display.value = result.toLocaleString('en');
+      } catch {
+        display.value = "Error";
+      }
+    }
+
+    function squareRoot() {
+      try {
+        let result = Math.sqrt(eval(display.value));
+        secondaryDisplay.value = `√(${display.value})`;
+        display.value = result.toLocaleString('en');
+      } catch {
+        display.value = "Error";
+      }
+    }
+
+    function square() {
+      try {
+        let result = Math.pow(eval(display.value), 2);
+        secondaryDisplay.value = `(${display.value})²`;
+        display.value = result.toLocaleString('en');
+      } catch {
+        display.value = "Error";
+      }
+    }
+
+    function toggleSign() {
+      try {
+        let result = -eval(display.value);
+        secondaryDisplay.value = `±(${display.value})`;
+        display.value = result.toLocaleString('en');
+      } catch {
+        display.value = "Error";
+      }
+    }
+
+    function factorial() {
+      try {
+        let num = eval(display.value);
+        if (num < 0 || !Number.isInteger(num)) {
+          display.value = "Error";
+          return;
+        }
+        let result = 1;
+        for (let i = 2; i <= num; i++) {
+          result *= i;
+        }
+        secondaryDisplay.value = `${num}!`;
+        display.value = result.toLocaleString('en');
+      } catch {
+        display.value = "Error";
+      }
+    }
+    // ✅ Keyboard Support
+  document.addEventListener("keydown", function(event) {
+    const key = event.key;
+
+    if (!isNaN(key)) {
+      appendValue(key); // numbers
+    } else if (["+", "-", "*", "/", ".", "(", ")", "%"].includes(key)) {
+      appendValue(key); // operators
+    } else if (key === "Enter") {
+      calculate(); // equals
+    } else if (key === "Backspace") {
+      deleteLast(); // delete last char
+    } else if (key === "Escape") {
+      clearDisplay(); // clear
+    }
+    // Optional: add shortcuts like "s" for sin, "l" for log, etc.
+  });
+
+  </script>
+</body>
+</html>

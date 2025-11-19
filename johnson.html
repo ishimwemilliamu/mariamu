@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Our Age</title>
+</head>
+<body>
+   <h1>Our Age</h1>
+   <label for="age">Enter your AGE:</label>
+   <input type="number" id="age">
+   <button onclick="checkup()">Send</button>
+   <p>Answer: <input id="ans" readonly></p>
+
+   <script>
+    function checkup() {
+      var age = parseInt(document.getElementById("age").value);
+      var result = "";
+
+      if (age <= 12) {
+          result = "Child";
+      } 
+      else if (age >= 13 && age <= 19) {
+          result = "Teenager";
+      } 
+      else if (age >= 20 && age <= 64) {
+          result = "Adult";
+      } 
+      else {
+          result = "Senior";
+      }
+
+      document.getElementById("ans").value = result;
+    }
+   </script> 
+</body>
+</html>
